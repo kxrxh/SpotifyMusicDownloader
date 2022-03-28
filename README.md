@@ -8,4 +8,4 @@ Simple tool to download .mp3 songs from playlist
 PLAYLIST_ID=my_playlist_id
 FOLDER_NAME=./my_folder_name/
 ```
-**.../playlist/[7HPAQX06lCjmjwldgX6Y19] <-- This is playlist ID.**
+.../playlist/[7HPAQX06lCjmjwldgX6Y19] <-- This is playlist ID.
