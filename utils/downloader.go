@@ -2,36 +2,33 @@ package utils
 
 import (
 	"fmt"
+	"github.com/KXRXH/SpotifyMusicDownloader/core"
+	"github.com/kkdai/youtube/v2"
 	"io"
-	"net/http"
 	"os"
+	"os/exec"
 )
 
-func DownloadSong(fileName string, songUrl string) (err error) {
-
-	out, err := os.Create(fileName + ".mp3")
-	if err != nil {
-		return err
+func DownloadSong(songUrl string) {
+	client := youtube.Client{}
+	video, err := client.GetVideo(songUrl)
+	format := video.Formats.WithAudioChannels()
+	if len(format) == 0 {
+		fmt.Println("Unable to download:", songUrl)
+		return
 	}
-	defer out.Close()
-
-	// Get the data
-	resp, err := http.Get(songUrl)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	// Check server response
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("bad status: %s", resp.Status)
-	}
-
-	// Writer the body to file
-	_, err = io.Copy(out, resp.Body)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	PanicErr(err)
+	stream, _, err := client.GetStream(video, &format[0])
+	PanicErr(err)
+	filePath := video.Author[:len(video.Author)-5] + video.Title
+	file, err := os.Create("./tmp/" + filePath + ".mp4")
+	PanicErr(err)
+	defer file.Close()
+	_, err = io.Copy(file, stream)
+	PanicErr(err)
+	cmd := exec.Command("ffmpeg.exe", "-i", "./tmp/"+filePath+".mp4", core.FolderName+filePath+".mp3")
+	FatalErr(cmd.Run())
+	go func() {
+		go PanicErr(os.Remove("./tmp/" + filePath + ".mp4"))
+	}()
 }

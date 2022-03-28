@@ -3,7 +3,7 @@ package spotifyParser
 import (
 	"context"
 	"fmt"
-	"github.com/KXRXH/music/core"
+	"github.com/KXRXH/SpotifyMusicDownloader/core"
 	"github.com/zmb3/spotify/v2"
 	spotifyauth "github.com/zmb3/spotify/v2/auth"
 	"golang.org/x/oauth2/clientcredentials"

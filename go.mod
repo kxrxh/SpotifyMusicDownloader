@@ -1,35 +1,28 @@
-module github.com/KXRXH/music
+module github.com/KXRXH/SpotifyMusicDownloader
 
 go 1.17
 
 require (
-	github.com/PuerkitoBio/goquery v1.5.1 // indirect
-	github.com/gocolly/colly v1.2.0
-)
-
-require (
-	github.com/bitly/go-simplejson v0.5.0
-	github.com/cavaliergopher/grab/v3 v3.0.1
 	github.com/joho/godotenv v1.4.0
+	github.com/raitonoberu/ytmusic v0.0.0-20220205190837-b5a9d8620bf3
 	github.com/zmb3/spotify/v2 v2.0.1
+	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8
 )
 
 require (
-	github.com/andybalholm/cascadia v1.2.0 // indirect
-	github.com/antchfx/htmlquery v1.2.4 // indirect
-	github.com/antchfx/xmlquery v1.3.10 // indirect
-	github.com/antchfx/xpath v1.2.0 // indirect
-	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
-	github.com/gobwas/glob v0.2.3 // indirect
-	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
+	github.com/Danile71/go-rtsp v0.1.2
+	github.com/kkdai/youtube/v2 v2.7.10
+)
+
+require (
+	github.com/bitly/go-simplejson v0.5.0 // indirect
+	github.com/dlclark/regexp2 v1.4.1-0.20201116162257-a2a8dda75c91 // indirect
+	github.com/dop251/goja v0.0.0-20211211112501-fb27c91c26ed // indirect
+	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/kennygrant/sanitize v1.2.4 // indirect
-	github.com/kr/pretty v0.3.0 // indirect
-	github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca // indirect
-	github.com/temoto/robotstxt v1.1.2 // indirect
-	golang.org/x/net v0.0.0-20210813160813-60bc85c4be6d // indirect
-	golang.org/x/oauth2 v0.0.0-20210810183815-faf39c7919d5 // indirect
-	golang.org/x/text v0.3.6 // indirect
+	github.com/google/go-cmp v0.5.6 // indirect
+	golang.org/x/net v0.0.0-20211215060638-4ddde0e984e9 // indirect
+	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 )

@@ -2,41 +2,46 @@ package main
 
 import (
 	"fmt"
-	"github.com/KXRXH/music/core"
-	"github.com/KXRXH/music/spotifyParser"
-	"github.com/KXRXH/music/utils"
-	"github.com/KXRXH/music/webparser"
-	"log"
+	"github.com/KXRXH/SpotifyMusicDownloader/core"
+	"github.com/KXRXH/SpotifyMusicDownloader/spotifyParser"
+	"github.com/KXRXH/SpotifyMusicDownloader/utils"
 	"os"
+	"sync"
 	"time"
 )
 
 func main() {
-	var (
-		data      webparser.SongData
-		inputData string
-	)
+	var wg sync.WaitGroup
 	core.Init()
 	songsList := spotifyParser.ParseSpotifyPlayList(core.PlayListID)
 	fmt.Printf("Starting downloading songs from the playlist[https://open.spotify.com/playlist/%v]\n",
 		core.PlayListID)
 	startTime := time.Now().Unix()
-	for n, item := range songsList {
-		inputData = item
-		webparser.ParseWeb(inputData, &data)
-
-		downloadUrl := "https://ruo.morsmusic.org" + data.Url
-		fmt.Printf("Downloading [%v%d%v/%v%d%v]: %v%s%v\n", utils.Green, n+1,
-			utils.Reset, utils.Yellow, len(songsList), utils.Reset, utils.Blue, item, utils.Reset)
-
-		err := os.MkdirAll(core.FolderName, os.ModePerm)
-		if err != nil {
-			log.Fatal(err)
+	utils.FatalErr(os.MkdirAll(core.FolderName, os.ModePerm))
+	utils.FatalErr(os.MkdirAll("./tmp/", os.ModePerm))
+	counter := 0
+	maxThreadCounter := 0
+	for _, item := range songsList {
+		songUrl := utils.GetSongData(item)
+		if maxThreadCounter < 5 {
+			wg.Add(1)
+			go startDownload(&wg, &counter, item, songsList, songUrl)
+			maxThreadCounter++
+		} else {
+			wg.Wait()
+			maxThreadCounter = 0
 		}
-		err = utils.DownloadSong(core.FolderName+item, downloadUrl)
-		if err != nil {
-			log.Println("Unable to download file:", err)
-		}
+
 	}
+	wg.Wait()
 	fmt.Printf("%vSuccess! Finished in %d sec.%v", utils.Green, time.Now().Unix()-startTime, utils.Reset)
+}
+
+func startDownload(wg *sync.WaitGroup, n *int, item string, songsList []string, songUrl string) {
+	defer wg.Done()
+	fmt.Printf("Downloading: %v%s%v\n", utils.Blue, item, utils.Reset)
+	utils.DownloadSong(songUrl)
+	*n++
+	fmt.Printf("%vDownloading is finnished%v [%v%d%v/%v%d%v]: %v%s%v\n", utils.Green, utils.Reset, utils.Green, *n,
+		utils.Reset, utils.Yellow, len(songsList), utils.Reset, utils.Blue, item, utils.Reset)
 }
