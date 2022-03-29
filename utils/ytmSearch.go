@@ -8,5 +8,7 @@ func GetSongData(songName string) string {
 	s := ytmusic.Search(songName)
 	result, err := s.Next()
 	PanicErr(err)
-	return result.Tracks[0].VideoID
+	track := result.Tracks[0]
+	return track.VideoID
+
 }

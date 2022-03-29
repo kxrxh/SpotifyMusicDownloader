@@ -3,33 +3,51 @@ package main
 import (
 	"fmt"
 	"github.com/KXRXH/SpotifyMusicDownloader/core"
-	"github.com/KXRXH/SpotifyMusicDownloader/spotifyParser"
+	"github.com/KXRXH/SpotifyMusicDownloader/spotify"
 	"github.com/KXRXH/SpotifyMusicDownloader/utils"
 	"os"
+	"strings"
 	"sync"
 	"time"
 )
 
 func main() {
 	var (
-		wg      sync.WaitGroup
-		inputId string
+		wg              sync.WaitGroup
+		userInput       string
+		downloadCounter int
 	)
-	fmt.Printf("Playlist id: ")
-	_, err := fmt.Scanf("%s", &inputId)
+	fmt.Printf("%vPlaylist link or id%v: %v", utils.Red, utils.Reset, utils.Green)
+	_, err := fmt.Scanf("%s", &userInput)
 	utils.FatalErr(err)
-	core.Init(inputId)
-	songsList := spotifyParser.ParseSpotifyPlayList(core.PlayListID)
-	fmt.Printf("Starting downloading songs from the playlist[https://open.spotify.com/playlist/%v]\n",
-		core.PlayListID)
-	startTime := time.Now().Unix()
+
+	// Getting playlist id if userInput was url.
+	if strings.Contains(userInput, "https://") {
+		userInput = userInput[strings.LastIndex(userInput, "/")+1:]
+	}
+	// Initializing global variables.
+	core.Init(userInput)
+
+	// Getting []string with tracks.
+	songsList := spotify.ParseSpotifyPlayList()
+
+	// Creating playlist folder and temp folder for .mp4 files.
 	utils.FatalErr(os.MkdirAll(core.FolderName, os.ModePerm))
 	utils.FatalErr(os.MkdirAll("./tmp/", os.ModePerm))
-	counter := 0
+
+	// Preparing data
+	downloadCounter = 0
+	startTime := time.Now().Unix()
+
 	for _, item := range songsList {
+
+		// Fixing names of user's tracks.
+		if item[:3] == " - " {
+			item = item[3:]
+		}
 		songUrl := utils.GetSongData(item)
 		wg.Add(1)
-		go startDownload(&wg, &counter, item, songsList, songUrl)
+		go startDownload(&wg, &downloadCounter, item, songsList, songUrl)
 
 	}
 	wg.Wait()
