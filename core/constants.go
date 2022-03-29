@@ -13,15 +13,12 @@ var (
 	FolderName   string
 )
 
-func Init() {
+func Init(input string) {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	PlayListID = os.Getenv("PLAYLIST_ID")
-	if PlayListID == "" {
-		log.Fatal("Unable to find playlist id.")
-	}
+	PlayListID = input
 	ClientID = os.Getenv("CLIENT_ID")
 	if ClientID == "" {
 		log.Fatal("Unable to find client id.")
@@ -31,8 +28,4 @@ func Init() {
 		log.Fatal("Unable to find client secret.")
 	}
 	FolderName = os.Getenv("FOLDER_NAME")
-	if FolderName == "" {
-		FolderName = "./songs/"
-	}
-
 }

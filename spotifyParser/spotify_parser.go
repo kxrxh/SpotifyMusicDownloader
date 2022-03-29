@@ -30,10 +30,14 @@ func ParseSpotifyPlayList(playlistId string) []string {
 		song  string
 	)
 	// handle playlist results
-	playListData, _ := client.GetPlaylistTracks(ctx, spotify.ID(playlistId))
-	for i := 0; i < playListData.Total; i++ {
-		song = fmt.Sprintf("%s - %s", playListData.Tracks[i].Track.Artists[0].Name,
-			playListData.Tracks[i].Track.Name)
+	playListTracks, _ := client.GetPlaylistTracks(ctx, spotify.ID(playlistId))
+	if core.FolderName == "" {
+		playList, _ := client.GetPlaylist(ctx, spotify.ID(playlistId))
+		core.FolderName = "./" + playList.Name + "/"
+	}
+	for i := 0; i < playListTracks.Total; i++ {
+		song = fmt.Sprintf("%s - %s", playListTracks.Tracks[i].Track.Artists[0].Name,
+			playListTracks.Tracks[i].Track.Name)
 		songs = append(songs, song)
 	}
 	return songs

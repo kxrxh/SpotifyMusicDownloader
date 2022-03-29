@@ -11,8 +11,14 @@ import (
 )
 
 func main() {
-	var wg sync.WaitGroup
-	core.Init()
+	var (
+		wg      sync.WaitGroup
+		inputId string
+	)
+	fmt.Printf("Playlist id: ")
+	_, err := fmt.Scanf("%s", &inputId)
+	utils.FatalErr(err)
+	core.Init(inputId)
 	songsList := spotifyParser.ParseSpotifyPlayList(core.PlayListID)
 	fmt.Printf("Starting downloading songs from the playlist[https://open.spotify.com/playlist/%v]\n",
 		core.PlayListID)
@@ -20,20 +26,14 @@ func main() {
 	utils.FatalErr(os.MkdirAll(core.FolderName, os.ModePerm))
 	utils.FatalErr(os.MkdirAll("./tmp/", os.ModePerm))
 	counter := 0
-	maxThreadCounter := 0
 	for _, item := range songsList {
 		songUrl := utils.GetSongData(item)
-		if maxThreadCounter < 5 {
-			wg.Add(1)
-			go startDownload(&wg, &counter, item, songsList, songUrl)
-			maxThreadCounter++
-		} else {
-			wg.Wait()
-			maxThreadCounter = 0
-		}
+		wg.Add(1)
+		go startDownload(&wg, &counter, item, songsList, songUrl)
 
 	}
 	wg.Wait()
+	utils.PanicErr(os.RemoveAll("./tmp/"))
 	fmt.Printf("%vSuccess! Finished in %d sec.%v", utils.Green, time.Now().Unix()-startTime, utils.Reset)
 }
 

@@ -12,6 +12,7 @@ import (
 func DownloadSong(songUrl string) {
 	client := youtube.Client{}
 	video, err := client.GetVideo(songUrl)
+	PanicErr(err)
 	format := video.Formats.WithAudioChannels()
 	if len(format) == 0 {
 		fmt.Println("Unable to download:", songUrl)
@@ -28,7 +29,4 @@ func DownloadSong(songUrl string) {
 	PanicErr(err)
 	cmd := exec.Command("ffmpeg.exe", "-i", "./tmp/"+filePath+".mp4", core.FolderName+filePath+".mp3")
 	FatalErr(cmd.Run())
-	go func() {
-		go PanicErr(os.Remove("./tmp/" + filePath + ".mp4"))
-	}()
 }
