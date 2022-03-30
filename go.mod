@@ -9,10 +9,7 @@ require (
 	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8
 )
 
-require (
-	github.com/Danile71/go-rtsp v0.1.2
-	github.com/kkdai/youtube/v2 v2.7.10
-)
+require github.com/kkdai/youtube/v2 v2.7.10
 
 require (
 	github.com/bitly/go-simplejson v0.5.0 // indirect
