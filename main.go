@@ -28,7 +28,7 @@ func main() {
 	// Initializing global variables.
 	core.Init(userInput)
 
-	// Getting []string with tracks.
+	// Getting array with tracks.
 	songsList := spotify.ParseSpotifyPlayList()
 
 	// Creating playlist folder and temp folder for .mp4 files.
@@ -42,22 +42,24 @@ func main() {
 	for _, item := range songsList {
 		// Fixing names of user's tracks.
 		trackFullName := item.Artist + " - " + item.Name
-		songUrl := utils.GetSongData(trackFullName)
+		songUrl := utils.GetSongData(trackFullName, 0)
 		if songUrl != "" {
 			wg.Add(1)
-			go startDownload(&wg, &downloadCounter, trackFullName, len(songsList), songUrl)
+			go startDownload(&wg, &downloadCounter, trackFullName, len(songsList), songUrl, trackFullName)
 		}
 	}
 	wg.Wait()
 	utils.PanicErr(os.RemoveAll("./tmp/"))
-	fmt.Printf("%vSuccess! Finished in %d sec.%v", utils.Green, time.Now().Unix()-startTime, utils.Reset)
+	fmt.Printf("%vSuccess! Finished in %d sec.%v\n", utils.Green, time.Now().Unix()-startTime, utils.Reset)
+	fmt.Printf("%vErrors: %d%v\n", utils.Red, len(songsList)-downloadCounter, utils.Reset)
 }
 
-func startDownload(wg *sync.WaitGroup, n *int, item string, numOfTracks int, songUrl string) {
+func startDownload(wg *sync.WaitGroup, n *int, item string, numOfTracks int, songUrl string, track string) {
 	defer wg.Done()
 	fmt.Printf("Downloading: %v%s%v\n", utils.Blue, item, utils.Reset)
-	utils.DownloadSong(songUrl)
-	*n++
+	if utils.DownloadSong(track, songUrl) {
+		*n++
+	}
 	fmt.Printf("%vDownloading is finnished%v [%v%d%v/%v%d%v]: %v%s%v\n", utils.Green, utils.Reset, utils.Green, *n,
 		utils.Reset, utils.Yellow, numOfTracks, utils.Reset, utils.Blue, item, utils.Reset)
 }

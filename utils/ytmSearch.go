@@ -4,14 +4,16 @@ import (
 	"github.com/raitonoberu/ytmusic"
 )
 
-func GetSongData(songName string) string {
+func GetSongData(songName string, index int) string {
 	s := ytmusic.Search(songName)
 	result, err := s.Next()
 	PanicErr(err)
 	if len(result.Tracks) == 0 {
-		return ""
+		if len(result.Videos) == 0 {
+			return ""
+		}
+		return result.Videos[index].VideoID
 	}
-	track := result.Tracks[0]
-	return track.VideoID
+	return result.Tracks[index].VideoID
 
 }
