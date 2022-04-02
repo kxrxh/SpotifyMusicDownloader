@@ -9,3 +9,5 @@ Simple tool to download .mp3 songs from playlist
 > 3. ***Wait*** for the download to finish.
 
 ![app](https://user-images.githubusercontent.com/74421236/161390545-3ada0250-a3d6-4c67-bf3c-667ff1621528.gif)
+
+[![Github All Releases](https://img.shields.io/github/downloads/KXRXH/SpotifyMusicDownloader/total.svg)]()
