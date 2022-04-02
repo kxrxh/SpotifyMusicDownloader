@@ -32,9 +32,10 @@ func DownloadSong(songUrl string) {
 	} else {
 		filePath = video.Author + video.Title
 	}
-
+	filePath = strings.ReplaceAll(filePath, "/", "")
 	// Creating mp4 file and writing to it
 	file, err := os.Create("./tmp/" + filePath + ".mp4")
+	PanicErr(err)
 	defer func(file *os.File) {
 		err = file.Close()
 		PanicErr(err)
@@ -44,5 +45,5 @@ func DownloadSong(songUrl string) {
 
 	// Getting audio stream of mp4 file and creating mp3 file at playlist dir.
 	cmd := exec.Command("ffmpeg.exe", "-i", "./tmp/"+filePath+".mp4", "-y", core.FolderName+filePath+".mp3")
-	FatalErr(cmd.Run())
+	PanicErr(cmd.Run())
 }

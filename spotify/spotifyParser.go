@@ -11,7 +11,12 @@ import (
 	"log"
 )
 
-func ParseSpotifyPlayList() []string {
+type Track struct {
+	Artist string
+	Name   string
+}
+
+func ParseSpotifyPlayList() []Track {
 
 	ctx := context.Background()
 	config := &clientcredentials.Config{
@@ -25,18 +30,7 @@ func ParseSpotifyPlayList() []string {
 	}
 	httpClient := spotifyauth.New().Client(ctx, token)
 	client := spotify.New(httpClient)
-
-	var (
-		songs []string
-		song  string
-	)
 	playlistInfo, err := client.GetPlaylist(ctx, spotify.ID(core.PlayListID))
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	// Getting track list of the spotify playlist.
-	playListTracks, err := client.GetPlaylistTracks(ctx, spotify.ID(core.PlayListID))
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -45,14 +39,30 @@ func ParseSpotifyPlayList() []string {
 	if core.FolderName == "" {
 		core.FolderName = "./" + playlistInfo.Name + "/"
 	}
+	var tracks []Track
+	getTrackList(&ctx, *client, &tracks, playlistInfo.Tracks.Total)
+	fmt.Printf("Starting downloading songs from %v%s%v%v playlist.\nTotal tracks: %v%d%v\n", utils.Red,
+		playlistInfo.Name, utils.Reset, utils.Green, utils.Red, playlistInfo.Tracks.Total, utils.Reset)
+	return tracks
+}
 
-	// Getting songs names.
-	for i := 0; i < playListTracks.Total; i++ {
-		song = fmt.Sprintf("%s - %s", playListTracks.Tracks[i].Track.Artists[0].Name,
-			playListTracks.Tracks[i].Track.Name)
-		songs = append(songs, song)
+func getTrackList(ctx *context.Context, client spotify.Client, trackList *[]Track, numOfTracks int) {
+	// Getting track list of the spotify playlist.
+	var song Track
+	c := 0
+	for numOfTracks > 0 {
+		playListTracks, err := client.GetPlaylistTracks(*ctx, spotify.ID(core.PlayListID), spotify.Offset(c*100))
+		if err != nil {
+			log.Fatalln(err)
+		}
+		for _, item := range playListTracks.Tracks {
+			song = Track{
+				Artist: item.Track.Artists[0].Name,
+				Name:   item.Track.Name,
+			}
+			*trackList = append(*trackList, song)
+		}
+		c++
+		numOfTracks /= 100
 	}
-	fmt.Printf("Starting downloading songs from %v%s%v%v playlist.\nTotal tracks: %v%d%v\n", utils.Red, playlistInfo.Name,
-		utils.Reset, utils.Green, utils.Red, playlistInfo.Tracks.Total, utils.Reset)
-	return songs
 }

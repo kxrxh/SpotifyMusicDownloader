@@ -40,26 +40,24 @@ func main() {
 	startTime := time.Now().Unix()
 
 	for _, item := range songsList {
-
 		// Fixing names of user's tracks.
-		if item[:3] == " - " {
-			item = item[3:]
+		trackFullName := item.Artist + " - " + item.Name
+		songUrl := utils.GetSongData(trackFullName)
+		if songUrl != "" {
+			wg.Add(1)
+			go startDownload(&wg, &downloadCounter, trackFullName, len(songsList), songUrl)
 		}
-		songUrl := utils.GetSongData(item)
-		wg.Add(1)
-		go startDownload(&wg, &downloadCounter, item, songsList, songUrl)
-
 	}
 	wg.Wait()
 	utils.PanicErr(os.RemoveAll("./tmp/"))
 	fmt.Printf("%vSuccess! Finished in %d sec.%v", utils.Green, time.Now().Unix()-startTime, utils.Reset)
 }
 
-func startDownload(wg *sync.WaitGroup, n *int, item string, songsList []string, songUrl string) {
+func startDownload(wg *sync.WaitGroup, n *int, item string, numOfTracks int, songUrl string) {
 	defer wg.Done()
 	fmt.Printf("Downloading: %v%s%v\n", utils.Blue, item, utils.Reset)
 	utils.DownloadSong(songUrl)
 	*n++
 	fmt.Printf("%vDownloading is finnished%v [%v%d%v/%v%d%v]: %v%s%v\n", utils.Green, utils.Reset, utils.Green, *n,
-		utils.Reset, utils.Yellow, len(songsList), utils.Reset, utils.Blue, item, utils.Reset)
+		utils.Reset, utils.Yellow, numOfTracks, utils.Reset, utils.Blue, item, utils.Reset)
 }
