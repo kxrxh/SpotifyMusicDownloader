@@ -10,4 +10,7 @@ Simple tool to download .mp3 songs from playlist
 
 ![app](https://user-images.githubusercontent.com/74421236/161390545-3ada0250-a3d6-4c67-bf3c-667ff1621528.gif)
 
-[![Github All Releases](https://img.shields.io/github/downloads/KXRXH/SpotifyMusicDownloader/total.svg)]()
+![GitHub all releases](https://img.shields.io/github/downloads/KXRXH/SpotifyMusicDownloader/total)
+![GitHub last commit](https://img.shields.io/github/last-commit/KXRXH/SpotifyMusicDownloader)
+<br>
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/KXRXH/SpotifyMusicDownloader)
