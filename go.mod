@@ -3,13 +3,15 @@ module github.com/KXRXH/SpotifyMusicDownloader
 go 1.17
 
 require (
-	github.com/joho/godotenv v1.4.0
 	github.com/raitonoberu/ytmusic v0.0.0-20220205190837-b5a9d8620bf3
 	github.com/zmb3/spotify/v2 v2.0.1
 	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8
 )
 
-require github.com/kkdai/youtube/v2 v2.7.10
+require (
+	github.com/BurntSushi/toml v0.3.1
+	github.com/kkdai/youtube/v2 v2.7.10
+)
 
 require (
 	github.com/bitly/go-simplejson v0.5.0 // indirect

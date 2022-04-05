@@ -1,9 +1,8 @@
 package core
 
 import (
-	"github.com/joho/godotenv"
+	"github.com/BurntSushi/toml"
 	"log"
-	"os"
 )
 
 var (
@@ -11,23 +10,36 @@ var (
 	ClientID     string
 	ClientSecret string
 	FolderName   string
+	AppConfig    Config
 )
 
-func Init(playlistIdByUser string) {
+type Config struct {
+	Multithreading     bool
+	CustomClientID     string
+	CustomClientSecret string
+}
 
-	// Reading variables from .env
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+func Init(playlistIdByUser string) {
 	PlayListID = playlistIdByUser
-	ClientID = os.Getenv("CLIENT_ID")
+
+	ClientSecret = "YOUR_SECRET"
+	ClientID = "YOUR_ID"
 	if ClientID == "" {
 		log.Fatal("Unable to find client id.")
 	}
-	ClientSecret = os.Getenv("CLIENT_SECRET")
 	if ClientSecret == "" {
 		log.Fatal("Unable to find client secret.")
 	}
-	FolderName = os.Getenv("FOLDER_NAME")
+	// Parsing config file.
+	_, err := toml.DecodeFile("app.toml", &AppConfig)
+	if err != nil {
+		AppConfig = Config{Multithreading: false, CustomClientID: "", CustomClientSecret: ""}
+		log.Printf("Unable to decode config file: %v.\nMultithreading is disabled!\n", err)
+	}
+	// Setting up custom ClientID and ClientSecret (for devs).
+	if AppConfig.CustomClientSecret != "" && AppConfig.CustomClientID != "" {
+		ClientSecret = AppConfig.CustomClientSecret
+		ClientID = AppConfig.CustomClientID
+		log.Println("Using custom ClientID and ClientSecret!")
+	}
 }

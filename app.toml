@@ -1,0 +1,7 @@
+# This variable enable/disable multithreading. true - Enabled and false - Disabled.
+# Multithreading mode is faster, but it causes heavy gpu load (with big playlists at least).
+Multithreading = true
+
+# Custom Client ID and Client Secret for devs.
+CustomClientID = ""
+CustomClientSecret = ""
