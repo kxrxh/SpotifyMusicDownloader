@@ -1,5 +1,5 @@
 # SpotifyMusicDownloader
-Simple tool to download .mp3 songs from playlist 
+Simple tool to download .mp3 songs from spotify playlist 
 ## Installation
 > Unpack archive to empty folder.
 ## Usage
